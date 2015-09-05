@@ -2,6 +2,7 @@ package now.myapplication;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +39,6 @@ public class Budget extends AppCompatActivity {
 
     public void sendPlus(View view) {
         // Do something in response to button click
-        Log.d ("Plus Clicked");
+        Log.d(Budget.class.getName(), "Plus Clicked");
     }
 }
