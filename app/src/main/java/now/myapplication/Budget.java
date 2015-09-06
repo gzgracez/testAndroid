@@ -1,5 +1,6 @@
 package now.myapplication;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,21 +45,41 @@ public class Budget extends AppCompatActivity {
     }
 
     /**
+     * Convenience function for sendPlus and sendMinus
+     * @return number provided in EditText
+     */
+    public int getNum() {
+        // Find the EditText view and save the string it contains
+        String valStr = ((EditText) findViewById(R.id.newTrans)).getText().toString();
+        // Initialize val as -1 (If it returns -1, something went wrong)
+        int val = -1;
+        try {
+            val = Integer.parseInt(valStr);
+        } catch(NumberFormatException e) {
+            // this shouldn't happen???
+        }
+        return val;
+    }
+
+    /**
+     * Convenience function to add val to an intent and restart Budget
+     * @param val
+     */
+    public void restart(int val) {
+        Intent intent = new Intent(this, Budget.class);
+        intent.putExtra("value", val);
+        startActivity(intent);
+        finish();
+    }
+
+    /**
      * Called when the plus button is clicked
      * @param view
      */
     public void sendPlus(View view) {
-        // Do something in response to button click
         Log.d(Budget.class.getName(), "Plus Clicked");
-        //TODO: update database, create Intent for Budget and startActivity
-        // Find the EditText view and save the string it contains
-        String valStr = ((EditText) findViewById(R.id.newTrans)).getText().toString();
-        try {
-            int val = Integer.parseInt(valStr);
-        } catch(NumberFormatException e) {
-            // this shouldn't happen???
-        }
-
+        // find the number in EditText and restart the activity with an intent containing that value
+        restart(getNum());
     }
 
     /**
@@ -67,6 +88,7 @@ public class Budget extends AppCompatActivity {
      */
     public void sendMinus(View view) {
         Log.d(Budget.class.getName(), "Minus Clicked");
-        //TODO: update database, create Intent for Budget and startActivity
+        // find the number in EditText and restart the activity with an intent containing that value
+        restart(-getNum());
     }
 }
