@@ -14,7 +14,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +54,16 @@ public class Budget extends AppCompatActivity {
             Log.d("Database entry: ", Float.toString(c.getFloat(1)));
             total += c.getFloat(1);
             transactions.add(Transaction.cursorToTrans(c));
+
+
         }
         // Make the adapter with the list of Transactions
         ArrayAdapter<Transaction> adapter = new ArrayAdapter<Transaction>(this, android.R.layout.simple_list_item_1, transactions);
         // Set the ListView to the adapter
         listview.setAdapter(adapter);
 
+        TextView textView = (TextView) findViewById(R.id.textViewtotal);
+        textView.setText("Total: " + total);
         // TODO: calculate total and display it
     }
 
@@ -111,7 +119,12 @@ public class Budget extends AppCompatActivity {
         Log.d(Budget.class.getName(), "got db");
         ContentValues values = new ContentValues();
         values.put(SQLiteHelper.COLUMN_AMOUNT, val);
-        values.put(SQLiteHelper.COLUMN_DATETIME, "datetime"); // TODO
+
+        Calendar calendar = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        String date = dateFormat.format(calendar.getTime());
+        values.put(SQLiteHelper.COLUMN_DATETIME, date); // TODO
+
         dbwrite.insert(SQLiteHelper.TABLE_TRANS, null, values);
 
         // restart the Activity, which will reload the layout
