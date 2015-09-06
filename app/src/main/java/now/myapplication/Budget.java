@@ -32,6 +32,7 @@ public class Budget extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_budget);
 
         dbHelper = new SQLiteHelper(this);
         Log.d("TAG","getting database");
@@ -50,12 +51,9 @@ public class Budget extends AppCompatActivity {
         // Make the adapter with the list of Transactions
         ArrayAdapter<Transaction> adapter = new ArrayAdapter<Transaction>(this, android.R.layout.simple_list_item_1, transactions);
         // Set the ListView to the adapter
-//        if (listview != null) {
-//            listview.setAdapter(adapter);
-//        }
+        listview.setAdapter(adapter);
 
         // TODO: calculate total and display it
-        setContentView(R.layout.activity_budget);
     }
 
     @Override

@@ -23,11 +23,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_AMOUNT = "amount";
     public static final String COLUMN_DATETIME = "datetime";
 
-//        CREATE TABLE Transactions (
-//        _id INTEGER PRIMARY KEY AUTOINCREMENT,
-//        value INTEGER,
-//        datetime TEXT
-//    )
+//  CREATE TABLE Transactions (
+//      _id INTEGER PRIMARY KEY AUTOINCREMENT,
+//      value INTEGER,
+//      datetime TEXT
+//  )
     private static final String SQL_CREATE_TABLES =
             "CREATE TABLE " + TABLE_TRANS + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
