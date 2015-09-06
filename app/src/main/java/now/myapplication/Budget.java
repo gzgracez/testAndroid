@@ -35,17 +35,20 @@ public class Budget extends AppCompatActivity {
         setContentView(R.layout.activity_budget);
 
         dbHelper = new SQLiteHelper(this);
-        Log.d("TAG","getting database");
         dbwrite = dbHelper.getWritableDatabase();
         dbread = dbHelper.getReadableDatabase();
 
+        // Load transactions
         Cursor c = dbread.rawQuery("select * from Transactions", new String[]{}); // TODO: order by datetime asc
+        // Find ListView
         ListView listview = (ListView) findViewById(R.id.transactions);
 
-        // Make a list of the Transactions
+        // Make a list of the Transactions and add total
         List<Transaction> transactions = new ArrayList<Transaction>();
+        float total = 0;
         while (c.moveToNext()) { // returns true if successful
-            Log.d("Database entry: ", Integer.toString(c.getInt(1)));
+            Log.d("Database entry: ", Float.toString(c.getFloat(1)));
+            total += c.getFloat(1);
             transactions.add(Transaction.cursorToTrans(c));
         }
         // Make the adapter with the list of Transactions
@@ -82,14 +85,14 @@ public class Budget extends AppCompatActivity {
      * Convenience function for sendPlus and sendMinus
      * @return number provided in EditText
      */
-    public int getNum() {
+    public float getNum() {
         Log.d(Budget.class.getName(), "entered getNum()");
         // Find the EditText view and save the string it contains
         String valStr = ((EditText) findViewById(R.id.newTrans)).getText().toString();
         // Initialize val as -1 (TODO If it returns -1, something went wrong)
-        int val = -1;
+        float val = -1;
         try {
-            val = Integer.parseInt(valStr);
+            val = Float.parseFloat(valStr);
         } catch(NumberFormatException e) {
             // this shouldn't happen???
         }
@@ -101,7 +104,7 @@ public class Budget extends AppCompatActivity {
      * Convenience function to add val to database and restart Budget
      * @param val
      */
-    public void restart(int val) {
+    public void restart(float val) {
         Log.d(Budget.class.getName(), "restarting");
 
         // TODO: add val to dbwrite

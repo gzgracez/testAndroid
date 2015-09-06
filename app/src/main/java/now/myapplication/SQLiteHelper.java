@@ -25,13 +25,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 //  CREATE TABLE Transactions (
 //      _id INTEGER PRIMARY KEY AUTOINCREMENT,
-//      value INTEGER,
-//      datetime TEXT
+//      value REAL NOT NULL,
+//      datetime TEXT NULL
 //  )
     private static final String SQL_CREATE_TABLES =
             "CREATE TABLE " + TABLE_TRANS + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_AMOUNT + " INTEGER NOT NULL, " +
+                    COLUMN_AMOUNT + " REAL NOT NULL, " +
                     COLUMN_DATETIME + " TEXT NULL" +
                     " )";
     private static final String SQL_DELETE_DATABASE =

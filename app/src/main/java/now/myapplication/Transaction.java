@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 public class Transaction {
     private int id;
-    private int value;
+    private float value;
     private String datetime;
 
     public Transaction() {
@@ -13,7 +13,7 @@ public class Transaction {
     public static Transaction cursorToTrans(Cursor c) {
         Transaction trans = new Transaction();
         trans.id = c.getInt(0);
-        trans.value = c.getInt(1);
+        trans.value = c.getFloat(1);
         trans.datetime = c.getString(2);
         return trans;
     }
@@ -26,11 +26,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public int getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(int val) {
+    public void setValue(float val) {
         this.value = val;
     }
 
@@ -43,6 +43,6 @@ public class Transaction {
     }
 
     public String toString() {
-        return Integer.toString(value);
+        return "$" + Float.toString(Math.abs(value));
     }
 }
