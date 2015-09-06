@@ -1,13 +1,19 @@
 package now.myapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 public class Budget extends AppCompatActivity {
 
@@ -16,10 +22,21 @@ public class Budget extends AppCompatActivity {
      * Loads the corresponding view (activity_budget.xml)
      * @param savedInstanceState
      */
+
+    private SQLiteHelper dbHelper;
+    private SimpleCursorAdapter dataAdapter;
+    SQLiteDatabase dbwrite;
+    SQLiteDatabase dbread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
+
+        dbHelper = new SQLiteHelper(this);
+        dbHelper.open();
+        dbwrite = db.getWritableDatabase();
+        dbread = db.getReadableDatabase();
     }
 
     @Override
@@ -42,6 +59,43 @@ public class Budget extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void listView() {
+
+        Cursor cursor = dbHelper.fetchAllValues();
+
+        String[] columns = new String[]{
+                //SQLiteHelper.COLUMN_ID,
+                SQLiteHelper.COLUMN_VALUE//,
+                //SQLiteHelper.COLUMN_DATETIME
+        };
+
+        int[] to = new int[] {
+                R.id.transactions
+        };
+
+        dataAdapter = new SimpleCursorAdapter(
+                this, R.layout.activity_budget,
+                cursor,
+                columns,
+                to,
+                0
+        );
+
+        ListView listView = (ListView)findViewById(R.id.transactions);
+        listView.setAdapter(dataAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor)listView.getItemAtPosition(position);
+
+                String value = cursor.getString(cursor.getColumnIndexOrThrow("code"));
+                Toast.makeText(getApplicationContext(),value, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     /**
@@ -77,7 +131,8 @@ public class Budget extends AppCompatActivity {
      * @param view
      */
     public void sendPlus(View view) {
-        Log.d(Budget.class.getName(), "Plus Clicked");
+        String valStr = ((EditText) findViewById(R.id.newTrans)).getText().toString();
+        Log.d(Budget.class.getName(), "Plus Clicked" + getNum());
         // find the number in EditText and restart the activity with an intent containing that value
         restart(getNum());
     }
@@ -87,7 +142,7 @@ public class Budget extends AppCompatActivity {
      * @param view
      */
     public void sendMinus(View view) {
-        Log.d(Budget.class.getName(), "Minus Clicked");
+        Log.d(Budget.class.getName(), "Minus Clicked" + (-getNum()));
         // find the number in EditText and restart the activity with an intent containing that value
         restart(-getNum());
     }
