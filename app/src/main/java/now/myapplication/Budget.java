@@ -6,9 +6,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 public class Budget extends AppCompatActivity {
 
+    /**
+     * Called when the Activity is started
+     * Loads the corresponding view (activity_budget.xml)
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +43,30 @@ public class Budget extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Called when the plus button is clicked
+     * @param view
+     */
     public void sendPlus(View view) {
         // Do something in response to button click
         Log.d(Budget.class.getName(), "Plus Clicked");
+        //TODO: update database, create Intent for Budget and startActivity
+        // Find the EditText view and save the string it contains
+        String valStr = ((EditText) findViewById(R.id.newTrans)).getText().toString();
+        try {
+            int val = Integer.parseInt(valStr);
+        } catch(NumberFormatException e) {
+            // this shouldn't happen???
+        }
+
+    }
+
+    /**
+     * Called when the minus button is clicked
+     * @param view
+     */
+    public void sendMinus(View view) {
+        Log.d(Budget.class.getName(), "Minus Clicked");
+        //TODO: update database, create Intent for Budget and startActivity
     }
 }
