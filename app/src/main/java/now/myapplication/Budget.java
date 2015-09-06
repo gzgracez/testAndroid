@@ -63,7 +63,7 @@ public class Budget extends AppCompatActivity {
         listview.setAdapter(adapter);
 
         TextView textView = (TextView) findViewById(R.id.textViewtotal);
-        textView.setText("Total: " + total);
+        textView.setText("Total: $" + total);
         // TODO: calculate total and display it
     }
 

@@ -43,6 +43,12 @@ public class Transaction {
     }
 
     public String toString() {
-        return getDatetime() + ": $" + Float.toString(Math.abs(value));
+        StringBuilder b = new StringBuilder();
+        b.append(getDatetime()).append(": ");
+        if (value < 0) {
+            b.append("-");
+        }
+        b.append("$").append(Math.abs(value));
+        return b.toString();
     }
 }
