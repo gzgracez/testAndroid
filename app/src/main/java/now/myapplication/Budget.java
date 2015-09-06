@@ -140,7 +140,8 @@ public class Budget extends AppCompatActivity {
     public void sendPlus(View view) {
         Log.d(Budget.class.getName(), "Plus Clicked " + getNum());
         // find the number in EditText and restart the activity with an intent containing that value
-        restart(getNum());
+        if (getNum() == -1 || getNum() == 0) ;
+        else restart(getNum());
     }
 
     /**
@@ -150,6 +151,7 @@ public class Budget extends AppCompatActivity {
     public void sendMinus(View view) {
         Log.d(Budget.class.getName(), "Minus Clicked " + (-getNum()));
         // find the number in EditText and restart the activity with an intent containing that value
-        restart(-getNum());
+        if (getNum() == -1 || getNum() == 0) ;
+        else restart(-getNum());
     }
 }
