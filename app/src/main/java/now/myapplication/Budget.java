@@ -1,5 +1,6 @@
 package now.myapplication;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,34 +10,52 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Budget extends AppCompatActivity {
+    private SQLiteHelper dbHelper;
+    private SimpleCursorAdapter dataAdapter;
+    SQLiteDatabase dbwrite;
+    SQLiteDatabase dbread;
 
     /**
      * Called when the Activity is started
      * Loads the corresponding view (activity_budget.xml)
      * @param savedInstanceState
      */
-
-    private SQLiteHelper dbHelper;
-    private SimpleCursorAdapter dataAdapter;
-    SQLiteDatabase dbwrite;
-    SQLiteDatabase dbread;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_budget);
 
         dbHelper = new SQLiteHelper(this);
-        dbHelper.open();
-        dbwrite = db.getWritableDatabase();
-        dbread = db.getReadableDatabase();
+        Log.d("TAG","getting database");
+        dbwrite = dbHelper.getWritableDatabase();
+        dbread = dbHelper.getReadableDatabase();
+
+        Cursor c = dbread.rawQuery("select * from Transactions", new String[]{}); // TODO: order by datetime asc
+        ListView listview = (ListView) findViewById(R.id.transactions);
+
+        // Make a list of the Transactions
+        List<Transaction> transactions = new ArrayList<Transaction>();
+        while (c.moveToNext()) { // returns true if successful
+            Log.d("Database entry: ", Integer.toString(c.getInt(1)));
+            transactions.add(Transaction.cursorToTrans(c));
+        }
+        // Make the adapter with the list of Transactions
+        ArrayAdapter<Transaction> adapter = new ArrayAdapter<Transaction>(this, android.R.layout.simple_list_item_1, transactions);
+        // Set the ListView to the adapter
+//        if (listview != null) {
+//            listview.setAdapter(adapter);
+//        }
+
+        // TODO: calculate total and display it
+        setContentView(R.layout.activity_budget);
     }
 
     @Override
@@ -61,67 +80,41 @@ public class Budget extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void listView() {
-
-        Cursor cursor = dbHelper.fetchAllValues();
-
-        String[] columns = new String[]{
-                //SQLiteHelper.COLUMN_ID,
-                SQLiteHelper.COLUMN_VALUE//,
-                //SQLiteHelper.COLUMN_DATETIME
-        };
-
-        int[] to = new int[] {
-                R.id.transactions
-        };
-
-        dataAdapter = new SimpleCursorAdapter(
-                this, R.layout.activity_budget,
-                cursor,
-                columns,
-                to,
-                0
-        );
-
-        ListView listView = (ListView)findViewById(R.id.transactions);
-        listView.setAdapter(dataAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Cursor cursor = (Cursor)listView.getItemAtPosition(position);
-
-                String value = cursor.getString(cursor.getColumnIndexOrThrow("code"));
-                Toast.makeText(getApplicationContext(),value, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
     /**
      * Convenience function for sendPlus and sendMinus
      * @return number provided in EditText
      */
     public int getNum() {
+        Log.d(Budget.class.getName(), "entered getNum()");
         // Find the EditText view and save the string it contains
         String valStr = ((EditText) findViewById(R.id.newTrans)).getText().toString();
-        // Initialize val as -1 (If it returns -1, something went wrong)
+        // Initialize val as -1 (TODO If it returns -1, something went wrong)
         int val = -1;
         try {
             val = Integer.parseInt(valStr);
         } catch(NumberFormatException e) {
             // this shouldn't happen???
         }
+        Log.d(Budget.class.getName(), "gotNum");
         return val;
     }
 
     /**
-     * Convenience function to add val to an intent and restart Budget
+     * Convenience function to add val to database and restart Budget
      * @param val
      */
     public void restart(int val) {
+        Log.d(Budget.class.getName(), "restarting");
+
+        // TODO: add val to dbwrite
+        Log.d(Budget.class.getName(), "got db");
+        ContentValues values = new ContentValues();
+        values.put(SQLiteHelper.COLUMN_AMOUNT, val);
+        values.put(SQLiteHelper.COLUMN_DATETIME, "datetime"); // TODO
+        dbwrite.insert(SQLiteHelper.TABLE_TRANS, null, values);
+
+        // restart the Activity, which will reload the layout
         Intent intent = new Intent(this, Budget.class);
-        intent.putExtra("value", val);
         startActivity(intent);
         finish();
     }
@@ -131,8 +124,7 @@ public class Budget extends AppCompatActivity {
      * @param view
      */
     public void sendPlus(View view) {
-        String valStr = ((EditText) findViewById(R.id.newTrans)).getText().toString();
-        Log.d(Budget.class.getName(), "Plus Clicked" + getNum());
+        Log.d(Budget.class.getName(), "Plus Clicked " + getNum());
         // find the number in EditText and restart the activity with an intent containing that value
         restart(getNum());
     }
@@ -142,7 +134,7 @@ public class Budget extends AppCompatActivity {
      * @param view
      */
     public void sendMinus(View view) {
-        Log.d(Budget.class.getName(), "Minus Clicked" + (-getNum()));
+        Log.d(Budget.class.getName(), "Minus Clicked " + (-getNum()));
         // find the number in EditText and restart the activity with an intent containing that value
         restart(-getNum());
     }
